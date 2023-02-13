@@ -40,3 +40,287 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+
+
+
+---
+title: "Assignment 1: Data Set Selection and Initial Processing"
+output: html_document
+---
+
+Note: many code chunks were adapted from Prof. Isserlin's BCB420 lectures (especially low-count filtering, plotting, group definition, etc) and Dr. Boris Steipe's online BCH441 modules (particularly package setup and data download).
+
+## Download the Data Set
+
+I chose GEO dataset [GSE224681](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE224681) for this assignment. First, install the required packages to download dataset of GEO.
+
+```{r prepares, echo=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+if (!requireNamespace("GEOquery", quietly = TRUE)) {
+    BiocManager::install("GEOquery")
+}
+
+```
+
+Now download the supplementary file (only if it has not been downloaded already):
+
+```{r}
+datafile <- "GSE224681_counts.tsv.gz"
+if (!file.exists(datafile)) {
+    files <- GEOquery::getGEOSuppFiles("GSE224681", makeDirectory = FALSE)
+}
+data <- read.delim(datafile,header=TRUE,check.names=FALSE,row.names = 1)
+# data <- read.table(datafile, header = T, row.names = 1, sep= "\t")
+dim(data)
+```
+
+```{r}
+data[1:10,1:4]
+```
+
+We see that we have reads of 63925 genes across 6 columns. Each column corresponds to 1 sample. Thus we have 6 samples: size of replicate groups is 3, with and without treatment by cisplatin.
+
+## Initial Assessment
+
+First we renamed the samples:
+
+```{r}
+new_data <- data
+# rename data colnames
+colnames(new_data) <- c(paste0("noCisplatin.", 1:3), paste0("cisplatin.", 1:3))
+new_data[1:10,]
+```
+
+```{r}
+rownames(new_data)[1:10]
+```
+
+Get a sense of our data distribution and quality by plotting the data for all samples with and without treatment by cisplatin, as well as calculate some summary statistics:
+
+```{r}
+dataToGraph <- new_data
+# add a pseudocount so log2 evaluates
+boxplot(log2(dataToGraph + 0.0001), las = 2, ylab="log2 counts", main = "Expression distribution, pre-filtering", cex.axis=0.7)
+```
+
+```{r}
+summary(log2(dataToGraph + 0.0001))
+```
+
+```{r}
+length(unique(rownames(new_data))) == nrow(new_data)
+```
+
+The last line of code returns TRUE, which demonstrates that all IDs listed as rownames in the given data are unique. This means that we do not have duplicate expression values for genes in the data.
+
+Let's also define the 4 groups of interest within our data:
+
+```{r}
+# 2 groups
+# 1. noCisplatin
+# 2. cisplatin
+samples <- data.frame(Treatment = c(rep("noCisplatin",3), rep("cisplatin",3)))
+rownames(samples) <- colnames(new_data)
+samples
+```
+
+## Cleaning the Data
+
+We use edgeR to remove uninformative and/or lowly expressed genes by filtering out all reads whose counts are too low.
+
+```{r, echo= FALSE}
+if (! requireNamespace("edgeR", quietly = TRUE)) {
+    BiocManager::install("edgeR")
+}
+if (! requireNamespace("limma", quietly = TRUE)) {
+    BiocManager::install("limma")
+}
+```
+
+For our experiment, the size of the smallest group of replicates n = 3. Use edgeR::cpm to conver to CPM, then filter out any rows with CPM \< 3:
+
+```{r}
+cpm_data <- edgeR::cpm(new_data)
+rownames(cpm_data) <- rownames(new_data)
+
+filtered_data <- new_data[rowSums(cpm_data >= 1) >= 3, ]
+
+dim(filtered_data)
+```
+
+We were able to filter out...
+
+```{r}
+length(data[,1]) - length(filtered_data[,1])
+```
+
+...50690 uninformative features.
+
+## Data Normalization
+
+Now that we've filtered out low counts, let's see what the distributions for all our samples look like:
+
+```{r}
+boxplot(log2(edgeR::cpm(filtered_data) + 0.0001), ylab = "log2 CPM", main = "Expression distribution, pre-normalization", cex = 0.5, cex.axis=0.7, las=2)
+```
+
+The boxplot shows 6 sets of outliers (all samples). These are 0 counts that I recovered by adding the pseudocount of 0.0001 to my data so log2 doesn't throw an error warning. Let's see how many of these outliers are there:
+
+```{r}
+idx <- 1:6
+zeroes <- vector(length=6)
+
+# Count number of 0s in each column.
+# aka determine number of 0-counts for all samples.
+for (i in idx) {
+    zero_idx <- which(filtered_data[, i] == 0)
+    zeroes[i] <- length(filtered_data[zero_idx,i])
+}
+zeroes
+sum(zeroes)
+```
+
+Each element of this vector is the number of zero counts for each samples. We see that they total to 137 outliers. Setting the limits to exclude these outliers:
+
+```{r}
+boxplot(log2(edgeR::cpm(filtered_data) + 0.0001), ylab = "log2 CPM", main = "Expression distribution, pre-normalization", cex = 0.5, cex.axis=0.7, las=2, ylim=c(-5,15))
+```
+
+Normalize the data with edgeR TMM:
+
+```{r}
+filtered_matrix <- as.matrix(filtered_data)
+
+# Normalize with respect to treatment type
+d <- edgeR::DGEList(counts=filtered_matrix, group=samples$Treatment)
+d <- edgeR::calcNormFactors(d)
+
+norm_data <- edgeR::cpm(d)
+
+boxplot(log2(norm_data + 0.0001), ylab = "log2 CPM", main= "Expression distribution, post-normalization", cex = 0.5, cex.axis=0.7, las=2, ylim=c(-5,15))
+```
+
+Use an MDS plot to represent how well the normalized samples are distinguished. The first plot is before normalization, and the second plot is after normalization.
+
+```{r}
+limma::plotMDS(filtered_data, labels=rownames(samples), col=c("red","blue")[factor(samples$Treatment)], main="Sample feature clustering, pre-normalization")
+```
+
+```{r}
+limma::plotMDS(d, labels=rownames(samples), col=c("red","blue")[factor(samples$Treatment)], main="Sample feature clustering, post-normalization")
+```
+
+We see much clearer separation between different groups (cisplatin vs noCisplatin), as well as tighter clustering between replicates of the same treatment group. This is a good outcome and means our normalization was effective.
+
+## Mapping to HUGO Symbols
+
+Supplementary file reveals that the rownames in the data are Ensemble Gene IDs. We must map from Ensemble IDs to HUGO symbols. For this we need the org.Hs.eg.db package and its functions.
+
+```{r,message=FALSE}
+if (!requireNamespace("clusterProfiler", quietly = TRUE))
+    BiocManager::install("clusterProfiler")
+
+if (!requireNamespace("org.Hs.eg.db", quietly = TRUE))
+    BiocManager::install("org.Hs.eg.db")
+
+if (!requireNamespace("stringr", quietly = TRUE)) {
+    install.packages("stringr")
+}
+library(org.Hs.eg.db)
+```
+
+```{r}
+# Remove the version number of Ensemble Gene ID
+gene.ens.id <- rownames(filtered_data)
+gene.ens.id <- stringr::str_replace(gene.ens.id, "\\..*","")
+rownames(filtered_data) <- gene.ens.id
+
+# Map from Entrez Gene IDs to HUGO symbols
+gene.symbols <- clusterProfiler::bitr(geneID = gene.ens.id, 
+                    fromType = "ENSEMBL",
+                    toType = "SYMBOL",
+                    OrgDb = org.Hs.eg.db)
+gene.symbols = gene.symbols[!duplicated(gene.symbols$ENSEMBL),]
+gene.symbols[1:10,]
+```
+
+```{r}
+# Remove all unmapped rows
+mapped_indices <- rownames(filtered_data) %in% gene.symbols$ENSEMBL
+sum(!mapped_indices)
+mapped_data <- filtered_data[mapped_indices, ]
+
+# Duplicated HUGO symbols
+table(duplicated(gene.symbols$SYMBOL))
+
+# Merge the data based on the same HUGO symbols
+# Set HUGO symbols as rownames of new dataframe
+mapped_symbols <- gene.symbols$SYMBOL[match(rownames(mapped_data), gene.symbols$ENSEMBL)]
+mapped_data <- aggregate(mapped_data, by=list(mapped_symbols), FUN=sum)
+mapped_data <- tibble::column_to_rownames(mapped_data,'Group.1')
+
+# Are all HUGO symbols remaining unique? This must return TRUE
+nrow(mapped_data) == length(unique(mapped_symbols))
+```
+
+```{r}
+# Final gene coverage of dataset
+dim(mapped_data)
+```
+
+```{r}
+# Number of rows deleted during mapping?
+nrow(filtered_data) - nrow(mapped_data)
+```
+
+mapped_data is the final output dataset of this workflow.
+
+## Interpretation
+
+**What are the control and test conditions of the dataset?**
+
+The experiment consists of treating tumor associated macrophages(TAMs) with cisplatin and comparing the induced expression changes with a control group . In this case, the experimental group would be TAMs that are treated with cisplatin, and the control group are TAMs that received no treatment.
+
+**Why is the dataset of interest to me?**
+
+Tumor resistance to chemotherapy and metastatic relapse account for more than 90% of cancer specific mortality. Tumor associated macrophages (TAMs) can process chemotherapeutic agents and impair their action. Little is known about the direct effects of chemotherapy on TAMs.The study explored the role of cisplatin in TAMs. The dataset is from a project studying genes associated with chemotherapy resistance. I thought it would be interesting to explore the mechanism of chemotherapy resistance in TAMs.
+
+**Were there expression values that were not unique for specific genes? How did you handle them?**
+
+Yes. A quick test demonstrated that there are 4 repeated identifiers before the mapping to HUGO symbols. I merged the rows based on the same HUGO symbols.
+
+**Were there expression values that could not be mapped to current HUGO symbols?**
+
+Yes, there were. 1034 expression values were unable to be mapped to HUGO symbols. I removed the unmapped rows.
+
+**How many outliers were removed?**
+
+I noticed 6 outliers in my data. I didn't remove any because I felt that their presence was too consistent across one group to simply be measurement error. However, I did reframe the boxplots to exclude these leftover low counts to better see the rest of the data.
+
+**How did you handle replicates?**
+
+I split my data into 2 groups of 3. One group for each combination of time and treatment, and each group contains 3 replicates. I kept each replicate separate, but made sure that replicates of two different groups are clearly differentiated in their names. Finally, I used n = 3 as the low-count threshold for filtering uninformative features, as per edgeR recommendation.
+
+**What is the final coverage of your dataset?**
+
+The final coverage of my dataset is 12197 features across 6 samples.
+
+Summarizing dimensions of data across entire workflow:
+
+```{r}
+summary <- list(initial=dim(data), merged_lanes=dim(new_data), removed_low_counts=dim(filtered_data), mapped=dim(mapped_data))
+summary
+```
+
+
+
+
+
+
+
+
+
