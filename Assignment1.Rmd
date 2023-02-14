@@ -3,12 +3,10 @@ title: "Assignment 1: Data Set Selection and Initial Processing"
 output: html_document
 ---
 
-Note: many code chunks were adapted from Prof. Isserlin's BCB420 lectures (especially low-count filtering, plotting, group definition, etc) and Dr. Boris Steipe's online BCH441 modules (particularly package setup and data download).
 
 ## Download the Data Set
 
-I chose GEO dataset [GSE224681](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE224681) for this assignment. First, install the required packages to download dataset of GEO.
-
+GEO dataset [GSE224681](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE224681) was chosen for this assignment. First, we should install the R package, "GEOquery", to download dataset from GEO database.
 ```{r prepares, echo=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
@@ -19,8 +17,7 @@ if (!requireNamespace("GEOquery", quietly = TRUE)) {
 
 ```
 
-Now download the supplementary file (only if it has not been downloaded already):
-
+Then download the supplement file of GSE224681 dataset:
 ```{r}
 datafile <- "GSE224681_counts.tsv.gz"
 if (!file.exists(datafile)) {
@@ -35,12 +32,11 @@ dim(data)
 data[1:10,1:4]
 ```
 
-We see that we have reads of 63925 genes across 6 columns. Each column corresponds to 1 sample. Thus we have 6 samples: size of replicate groups is 3, with and without treatment by cisplatin.
+The dataset consists of 63925 genes and 6 samples. Each column of the dataset represents one sample. This experimental samples is divided into two groups, one group of 3 replicate samples, with and without treatment by cisplatin.
 
 ## Initial Assessment
 
-First we renamed the samples:
-
+First, we need to rename the samples:
 ```{r}
 new_data <- data
 # rename data colnames
@@ -52,8 +48,7 @@ new_data[1:10,]
 rownames(new_data)[1:10]
 ```
 
-Get a sense of our data distribution and quality by plotting the data for all samples with and without treatment by cisplatin, as well as calculate some summary statistics:
-
+By plotting the data for all cisplatin-treated and non-cisplatin-treated samples, we understand the distribution and quality of our data and calculate some summary statistics:
 ```{r}
 dataToGraph <- new_data
 # add a pseudocount so log2 evaluates
@@ -67,11 +62,10 @@ summary(log2(dataToGraph + 0.0001))
 ```{r}
 length(unique(rownames(new_data))) == nrow(new_data)
 ```
+The result of the last line of code is TRUE, which indicates that all IDs listed as rownames in the dataset are unique.This demonstrates that there is no duplicate gene expression values in the data. 
 
-The last line of code returns TRUE, which demonstrates that all IDs listed as rownames in the given data are unique. This means that we do not have duplicate expression values for genes in the data.
 
-Let's also define the 4 groups of interest within our data:
-
+We divide the samples into two groups, one group of 3 replicate samples:
 ```{r}
 # 2 groups
 # 1. noCisplatin
@@ -83,19 +77,19 @@ samples
 
 ## Cleaning the Data
 
-We use edgeR to remove uninformative and/or lowly expressed genes by filtering out all reads whose counts are too low.
+Lowly expressed genes should be removed from both biological and statistical perspectives; biologically, a gene must have a certain amount of expression to be able to transcribe and translate proteins and have biological significance; statistically, an overexpressed gene is not able to obtain significant differences and is not statistically significant.
 
+The first principle to follow is that the count number of a gene should be at least 10-15 in some samples. we can artificially specify that only those above 10 are counted. However, it is slightly better to use cpm instead of raw counts. CPM is well known to eliminate sequencing depth differences.
 ```{r, echo= FALSE}
-if (! requireNamespace("edgeR", quietly = TRUE)) {
+if (!requireNamespace("edgeR", quietly = TRUE)) {
     BiocManager::install("edgeR")
 }
-if (! requireNamespace("limma", quietly = TRUE)) {
+if (!requireNamespace("limma", quietly = TRUE)) {
     BiocManager::install("limma")
 }
 ```
 
-For our experiment, the size of the smallest group of replicates n = 3. Use edgeR::cpm to conver to CPM, then filter out any rows with CPM \< 3:
-
+In this experiment, the number of replicate samples for each group is 3, so we set the threshold of CPM to 3 to filter the rows:
 ```{r}
 cpm_data <- edgeR::cpm(new_data)
 rownames(cpm_data) <- rownames(new_data)
@@ -105,24 +99,46 @@ filtered_data <- new_data[rowSums(cpm_data >= 1) >= 3, ]
 dim(filtered_data)
 ```
 
-We were able to filter out...
 
 ```{r}
 length(data[,1]) - length(filtered_data[,1])
 ```
-
-...50690 uninformative features.
+Using cpm >= 3 for filtering, we finally filtered out 50690 lowly expressed genes and got  13235 features.
 
 ## Data Normalization
 
-Now that we've filtered out low counts, let's see what the distributions for all our samples look like:
+During sample preparation or sequencing, external factors that do not have biological significance can affect the expression of individual samples. For example, samples prepared in the first batch of an experiment will have higher expression overall than samples prepared in the second batch. Assuming that the range and distribution of expression values should be similar for all samples, normalization is needed to ensure that the expression distribution is similar for each sample throughout the experiment.
 
+There are 7 common normalization methods:
+
+1. Total count，TC
+
+2. Upper Quartile, UQ
+
+3. Median, Med
+
+4. DESeq
+
+5. Trimmed Mean of M-values, TMM
+
+6. Quantile
+
+7. Reads Per Kilobase Per Million mapped reads, RPKM
+
+
+
+All these methods can be further divided into two categories based on their principles, the first one based on the size of the library (TMM, DESeq) and the second one based on the distribution of the number of reads (TC, UQ, Med, Q, RPKM).
+
+The prerequisite assumption of TMM, DESeq in the first category is that the expression of most genes is not different, and then, based on this assumption a normalization factor is proposed for the criteria based on the mean, or median, proportion, etc. In the case of TMM, however, the ratio is calculated by comparing each sequencing data with the reference data, whereas DESeq considers all samples.
+
+The second type of normalization method presupposes that the distribution of the number of reads should be similar, either in single quartiles (TC, Med, UQ, RPKM), or in all quartiles (Q).
+
+View the distribution of filtered data by plotting a boxplot for all samples:
 ```{r}
 boxplot(log2(edgeR::cpm(filtered_data) + 0.0001), ylab = "log2 CPM", main = "Expression distribution, pre-normalization", cex = 0.5, cex.axis=0.7, las=2)
 ```
 
 The boxplot shows 6 sets of outliers (all samples). These are 0 counts that I recovered by adding the pseudocount of 0.0001 to my data so log2 doesn't throw an error warning. Let's see how many of these outliers are there:
-
 ```{r}
 idx <- 1:6
 zeroes <- vector(length=6)
@@ -138,13 +154,11 @@ sum(zeroes)
 ```
 
 Each element of this vector is the number of zero counts for each samples. We see that they total to 137 outliers. Setting the limits to exclude these outliers:
-
 ```{r}
 boxplot(log2(edgeR::cpm(filtered_data) + 0.0001), ylab = "log2 CPM", main = "Expression distribution, pre-normalization", cex = 0.5, cex.axis=0.7, las=2, ylim=c(-5,15))
 ```
 
-Normalize the data with edgeR TMM:
-
+In our work flow, we use TMM of edgeR to normalize the data:
 ```{r}
 filtered_matrix <- as.matrix(filtered_data)
 
@@ -157,7 +171,9 @@ norm_data <- edgeR::cpm(d)
 boxplot(log2(norm_data + 0.0001), ylab = "log2 CPM", main= "Expression distribution, post-normalization", cex = 0.5, cex.axis=0.7, las=2, ylim=c(-5,15))
 ```
 
-Use an MDS plot to represent how well the normalized samples are distinguished. The first plot is before normalization, and the second plot is after normalization.
+One of the most important exploratory graphs used to examine gene expression analysis is the MDS graph or other similar graphs. These graphs use unsupervised clustering to show similarities and dissimilarities between samples, giving us a general idea of how many differentially expressed genes can be detected before proceeding to a formal test. Ideally, samples would cluster well within different experimental groups, and it would be possible to identify samples far from their groups and track the source of error or additional variance. If there are technical replicates, they should be very close to each other.
+
+Such a plot can be drawn using the plotMDS function in limma. The first plot is before normalization, and the second plot is after normalization.
 
 ```{r}
 limma::plotMDS(filtered_data, labels=rownames(samples), col=c("red","blue")[factor(samples$Treatment)], main="Sample feature clustering, pre-normalization")
@@ -171,8 +187,9 @@ We see much clearer separation between different groups (cisplatin vs noCisplati
 
 ## Mapping to HUGO Symbols
 
-Supplementary file reveals that the rownames in the data are Ensemble Gene IDs. We must map from Ensemble IDs to HUGO symbols. For this we need the org.Hs.eg.db package and its functions.
+Supplementary file reveals that the rownames in the data are Ensemble Gene IDs. We must map from Ensemble IDs to HUGO symbols. Same as other gene IDs, Ensemble gene IDs may not match the gene information we want to obtain one-to-one. Some Ensemble gene IDs may not have corresponding symbol IDs, some Ensemble gene IDs may correspond to multiple symbol IDs, and some Ensemble gene IDs have multiple correspondences to one. We should remove the Ensemble gene IDs which are not able to be mapped to the symbol IDs.In the case of multiple symbol IDs for one Ensemble gene ID, we only need to select one of the matching relationships. In the case of multiple Ensemble gene IDs corresponding to one symbol ID, we can merge them by taking the mean, maximum or sum. 
 
+In  our workflow, we merge multiple Ensemble gene IDs corresponding to one symbol ID by taking the sum.We use the bitr function of clusterProfiler to transform the IDs.
 ```{r,message=FALSE}
 if (!requireNamespace("clusterProfiler", quietly = TRUE))
     BiocManager::install("clusterProfiler")
@@ -244,7 +261,7 @@ Tumor resistance to chemotherapy and metastatic relapse account for more than 90
 
 **Were there expression values that were not unique for specific genes? How did you handle them?**
 
-Yes. A quick test demonstrated that there are 4 repeated identifiers before the mapping to HUGO symbols. I merged the rows based on the same HUGO symbols.
+Yes. There are 4 repeated identifiers before the mapping to HUGO symbols in the analysis. We merge multiple Ensemble gene IDs corresponding to one symbol ID by taking the sum.
 
 **Were there expression values that could not be mapped to current HUGO symbols?**
 
