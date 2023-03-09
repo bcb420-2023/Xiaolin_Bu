@@ -13,7 +13,7 @@ https://github.com/bcb420-2023/Xiaolin_Bu/wiki
 
 [Assignment 1 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assignment-1:-Data-Set-Selection-and-Initial-Processing)
 
-[A2 journal entry](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/The-Human-Protein-Atlas)
+[Annotation sources](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/The-Human-Protein-Atlas)
 
 
 [Assignment2 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assigment2)
