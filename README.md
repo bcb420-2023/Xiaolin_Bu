@@ -17,3 +17,4 @@ https://github.com/bcb420-2023/Xiaolin_Bu/wiki
 
 
 [Assignment2 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assigment2)
+[G-Profiler](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/G:-Profiler)
