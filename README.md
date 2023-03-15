@@ -15,8 +15,10 @@ https://github.com/bcb420-2023/Xiaolin_Bu/wiki
 
 [Annotation sources](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/The-Human-Protein-Atlas)
 
-
-[Assignment2 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assigment2)
-
-
 [G-Profiler](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/G:-Profiler)
+
+[Assignment 2 Rnotebook](https://github.com/bcb420-2023/Xiaolin_Bu/blob/main/Assignment2/Assignment2.Rmd)
+
+[Assignment 2 html Report](https://github.com/bcb420-2023/Xiaolin_Bu/blob/main/Assignment2/Assignment2.html)
+
+[Assignment 2 journal]()
