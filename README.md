@@ -23,4 +23,4 @@ https://github.com/bcb420-2023/Xiaolin_Bu/wiki
 
 [Assignment 2 html Report](https://github.com/bcb420-2023/Xiaolin_Bu/blob/main/Assignment2/Assignment2.html)
 
-[Assignment 2 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assigment2)
+[Assignment 2 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assignment-2-Journal)
