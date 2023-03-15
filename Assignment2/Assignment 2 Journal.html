@@ -1,0 +1,675 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Assignment 2 Journal</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="7ff77a63-11f4-46ff-8eaf-50199966c78f" class="page sans"><header><h1 class="page-title">Assignment 2 Journal</h1></header><div class="page-body"><h2 id="38717444-8840-4eb7-9894-762ff3b78bde" class="">Objective</h2><p id="77533a5c-50f2-41e7-8c54-c5ab8ff9fcb1" class="">Your task is to take the normalized expression data that was created in Assignment #1 and rank your genes according to differential expression. Once your list is ranked you will perform thresholded over-representation analysis to highlight dominant themes in your top set of genes.</p><p id="ae7a6d08-29ec-433c-845b-2b3393ee6426" class="">
+Include a brief introduction section with a summary of the normalization and results done in the first assignment. Assume that the person reading the report has not read your assignment #1 report. Including basic statistics from that analysis will be helpful. (for example, data downloaded from GEO with id X, …)</p><h2 id="ca57d739-7d81-42a8-8624-afcd05c61335" class="">Time managerment</h2><p id="7e8d58b4-f2ce-4277-9ba9-9aee788f387f" class="">Started: Mar 11, 2023</p><p id="2ae90083-fe43-44cc-9db9-54275c4e01cc" class="">Finished: Mar 11, 2023</p><p id="107430f9-23b1-4010-8d9d-e683f750a136" class="">Time Estimated: 5 hours</p><p id="907efa18-a958-48db-b461-70eeba9a149b" class="">Time Spent: 4 hours</p><h2 id="702f72dc-ad34-4687-8676-c5127ec03e90" class="">Results</h2><p id="2021a82a-3341-4603-a32a-2d1dd14f220e" class="">In assignment 1, we have downloaded the supplementary data of the dataset <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE224681">GSE224681</a>[<a href="https://www.frontiersin.org/articles/10.3389/fimmu.2023.1000497/full">1</a>] from GEO database.
+The experiment of this dataset consists of treating tumor associated macrophages(TAMs) with cisplatin and comparing the induced expression changes with a control group. In this case, the experimental group would be TAMs that are treated with cisplatin, and the control group are TAMs that received no treatment.There are 3 replicates for each group.
+In assignment 1, we have completed the pre-processing of the data, including the process of data cleaning and normalization, and the process of gene ID conversion.The initial data is a data frame of 6 columns(samples) and 63925 rows(genes).Using edgeR, we filter out any genes of total CPM &lt; 3, which is the size of our smallest group of replicates.We filter out 50690 uninformative features, and 13235 features are left.Then we remove the Ensemble gene IDs which are not able to be mapped to the symbol IDs and map from Ensemble IDs to HUGO symbols for each feature.We merge multiple Ensemble gene IDs corresponding to one symbol ID by taking the sum.The final data is a data frame of 6 columns and 12226 rows, with unique HUGO identifiers as <a href="http://rownames.in/">rownames.In</a> this assignment, we will use this data for the next work, Differential Gene Expression Analysis and Thresholded Over-representation Analysis.</p><h3 id="479860bc-0b25-42c0-a61d-147c83f6678c" class="">Differential Gene Expression</h3><p id="22c0697e-4d7a-4dec-82d2-b43c4ea4a2ba" class="">Microarray analysis and RNA-seq generate large amounts of data, which require statistical analysis
+ to identify differentially expressed genes between two or more biological samples. This involves comparing the expression levels of each gene and calculating a statistical significance value, such as a p-value or a false discovery rate(FDR). Genes with a significant difference in expression levels are considered to be differentially expressed.</p><p id="87a21fcd-fd97-404a-823e-f6524c99fa0c" class="">There are common methods and software packages used in differential gene expression analysis.</p><ol type="1" id="8ef1f12b-46aa-489d-bd52-85f7c52f9cd9" class="numbered-list" start="1"><li>t-test: t-test is a statistical test used to determine if the means of two samples are significantly different from each other. It is a simple and commonly used method for differential gene expression analysis.</li></ol><ol type="1" id="3244b132-07fa-421e-8d6f-024a0aea2b5b" class="numbered-list" start="2"><li>Analysis of variance (ANOVA): ANOVA is used to test for differences between two or more groups. ANOVA is commonly used in differential expression analysis to test for gene expression differences among multiple groups.</li></ol><ol type="1" id="5308efac-c12d-45de-a72a-a9f52f47cafb" class="numbered-list" start="3"><li>DESeq2: DESeq2 is a widely used software package for differential gene expression analysis in RNA-seq data. It models count data using a negative binomial distribution and estimates the dispersion of the data using maximum likelihood.[3]</li></ol><ol type="1" id="a701e136-380d-45fc-b359-e9f5fed7b221" class="numbered-list" start="4"><li>edgeR: edgeR is another widely used software package for differential gene expression analysis in RNA-seq data. It models count data using a negative binomial distribution and estimates the dispersion of the data using empirical Bayes methods.[4]</li></ol><ol type="1" id="5dde700a-ae2b-4e92-a921-e1537eefdea9" class="numbered-list" start="5"><li>Limma: Limma is a software package used for differential gene expression analysis in microarray and RNA-seq data. It uses a linear modeling approach to estimate the effect of different experimental conditions on gene expression. Limma also performs normalization of the data to correct for differences in array quality and other technical effects.[5]</li></ol><p id="72455602-f454-41e5-a218-cc6fc62e671f" class="">In this assigment, I choose DESeq2 to complete Differential Gene Expression Analysis. The following are the steps typically involved in using DESeq2 for differential gene expression analysis[4]:</p><ol type="1" id="145206fb-4f74-423a-be52-b1b725ff3d7a" class="numbered-list" start="1"><li>Normalization: The count matrix is normalized to correct for differences in sequencing depth and other technical effects. DESeq2 uses a normalization method based on the median of ratios between each sample and a geometric mean of all samples.</li></ol><ol type="1" id="889b380c-3d8b-43b5-9301-ca20a2301e12" class="numbered-list" start="2"><li>Differential expression analysis: DESeq2 uses a negative binomial distribution to model the count data and estimate the dispersion of the data using maximum likelihood estimation. Differential expression analysis is then performed using a generalized linear model, which includes terms for the experimental design and sample covariates. DESeq2 calculates p-values and log2 fold changes for each gene, which are used to identify differentially expressed genes.</li></ol><ol type="1" id="20570e8e-6ae7-43c6-9ef9-e5dd358306c3" class="numbered-list" start="3"><li>Multiple testing correction: The p-values are adjusted for multiple testing using a method such as the Benjamini-Hochberg procedure to control the false discovery rate.</li></ol><p id="dd750e7d-9e53-44b3-a5ff-262c4d275c1b" class="">I use the multiple hypothesis correction method, Benjamini-Hochberg, to correct my p-values.This method is a built-in default method of DESeq2. The the threshold of p-value and adjusted p-value are both set at &lt;0.05, which has been the standard in most areas of statistical testing. </p><p id="b28d4809-d209-48b3-a938-f0cab1a86f13" class="">
+</p><p id="50de59a7-52bf-4b5f-a1ed-fb3bcd62f019" class="">According to the result of DESeq2, 2218 genes pass the threshold p-value, but after adjustment, 893 genes are left. We conclude that these 893 genes are my significantly differentially expressed genes. We uncover 432 up-regulated genes and 461 down-regulated genes in the samples with cisplatin treatment compared to the samples without cisplatin treatment.Then we use a heatmap and a vocalo plot to visualize the differentially expressed genes.</p><h3 id="e1da3b69-3b7c-4b69-b45d-67c8f1eee667" class=""><strong>Thresholded over-representation analysis</strong></h3><p id="1da1c4ac-cedb-4978-aadb-2029501413f9" class="">Thresholded over-representation analysis (ORA) is a statistical method used for identifying enriched gene sets in biological datasets. The following are the steps involved in thresholded ORA[6, 7]:</p><ol type="1" id="85bbb17c-8e7f-4fe5-bb97-1ea0714a93a7" class="numbered-list" start="1"><li>Gene set definition: A gene set is defined as a group of genes that share a common function or are involved in a specific biological pathway. The gene set can be defined based on prior knowledge from databases such as Gene Ontology (GO) or Kyoto Encyclopedia of Genes and Genomes (KEGG).</li></ol><ol type="1" id="b069d6b8-b1df-47ba-ac74-d3b28d181119" class="numbered-list" start="2"><li>Thresholding: The thresholding step involves filtering the genes in the dataset based on a predefined threshold, such as a fold change or p-value. This reduces the number of genes analyzed, which improves the statistical power and reduces false positives.</li></ol><ol type="1" id="81ad5aad-142b-4ae7-a79d-75b0b102047f" class="numbered-list" start="3"><li>Over-representation analysis: Over-representation analysis involves comparing the number of genes in the gene set to the number of genes in the dataset that pass the threshold. A statistical test, such as Fisher&#x27;s exact test or chi-square test, is used to determine if the gene set is over-represented in the dataset compared to what would be expected by chance.</li></ol><ol type="1" id="e8840c38-214e-471d-9dd2-2519a5209962" class="numbered-list" start="4"><li>Multiple testing correction: Since multiple gene sets are typically tested, multiple testing correction is applied to control the false discovery rate. Common methods for multiple testing correction include the Benjamini-Hochberg procedure or the Bonferroni correction.</li></ol><ol type="1" id="f1e349c5-0e71-4694-9780-48b5a06b17b7" class="numbered-list" start="5"><li>Functional analysis: The enriched gene sets can be further analyzed for functional enrichment using tools such as Enrichr, DAVID, or GSEA. This involves identifying enriched biological pathways and functions that are associated with the differentially expressed genes.</li></ol><p id="5635105c-5bb3-4d37-84d8-47c8efd19636" class="">In this assigment, I choose g:Profiler to complete Thresholded Over-Representation Analysis.Because g:Profiler is easy (just copy and paste) and it has been used in previous assignments. And the results are easy to interpret.</p><p id="ef3bebf7-7bfe-4847-a47e-652933ae7709" class="">I copy the gene names from three gene list files and paste them into the query box of g:Profiler. Set the Organism option to “Homo sapiens(Human)”, the Significance threshold to “Benjamini-Hochberg FDR” and the User threshold to 0.05.Select GO biological process(No electronic GO annotations), KEGG, Reactome, and WikiPathways as the data sources.According to the website of g:Profiler, the annotation data sources (KEGG, Reactome etc) are updated during the same update routine straight from the data sources.GO biological processes was last released on 2022-12-04, KEGG was was last released on 2022-12-26, Reactome was last released on 2022-12-28, and WikiPathways was last released on 2022-12-10.All annotation databases have been updated to the latest version. This would result in my good result.The original paper used KEGG, GO, Reactome and HALLMARK as the annotation sources.And We have practiced three data sources(GO biological processes, Reactome and WikiPathways) in our previous assignment. So I choose the annotation sources above.</p><p id="c5b862b6-7f75-49b9-9fd0-9ba2c8a41fa1" class="">For all DEGs, GO biological processes returned 302 results, KEGG returned 5 results, Reactome returned 54 results, and WikiPathways returnd 10 results.</p><p id="f29086e1-213d-4d0e-aa5d-3bc083da9ebd" class="">Same as the homework assignment, we then placed an arbitrary restriction on the term sizes of 5-200 to remove large pathways and focus on smaller, more local ones.All of the results have changed.The number of terms of GO:BP changed from 302 to 124, the number of terms of KEGG changed from 5 to 4, the number of terms of Reactome changed from 54 to 37, and the number of terms of WikiPathways change from 10 to 9.</p><p id="7447c891-b9ab-4755-977d-2c332fdbac4a" class="">Then we only input up-regulated genes into g:Profiler and place an arbitrary restriction on the term sizes of 5-200. We get 235 terms from GO:BP, 6 terms from KEGG, 5 terms from Reactome and 7 terms from WikiPathways.Compared to the gene list of all differentially expressed genes together, the number of terms from GO biological processes and KEGG have become more (111 terms more from GO:BP, 2 terms more from KEGG), and the number of terms from the other data sources have been less(32 terms less from Reactome, 2 terms less from WikiPathways).</p><p id="4f1e0c15-56be-45de-b060-52ba02ad99a1" class="">Next we only input down-regulated genes into g:Profiler and place an arbitrary restriction on the term sizes of 5-200. We get 39 terms from GO:BP, 9 terms from KEGG, 4 terms from Reactome and 6 terms from WikiPathways. Compared to the gene list of all differentially expressed genes together, the number of terms from GO biological processes and KEGG have become less (85 terms less from GO:BP, 1 terms less from KEGG), and the number of terms from Reactome has become more(9 terms more from Reactome).Only the number of the terms returned from WikiPathways remains consistent.</p><h2 id="33ae33a8-2763-4a7b-8084-f9ddbbac1a25" class=""><strong><strong>Interpretation</strong></strong></h2><p id="9b6a3c27-8942-47a8-9fbc-8f5276973f67" class="">In my results of Thresholded Over-Representation Analysis, the upregulated genes are significantly enriched in p53 pathway, DNA repair pathway.The downregulated genes are significantly enriched in cholesterol metabolism related pathways. </p><p id="19015d65-6935-4bd8-8e2c-3712b03c5d2c" class="">According to the original paper, they performed gene set enrichment analysis (GSEA) for up- and downregulated genes in cisplatin condition to evaluate pathway enrichment under cisplatin treatment.They choose the following databases REACTOM, KEGG, HALLMARK, GO as the annotation databases.The interferon alpha and gamma responses were the top upregulated pathways, along with p53 pathway, inflammatory response, IL-6 and TNFa signaling, epithelial-mesenchymal transition, endocytosis, hypoxia, KRAS signaling, DNA repair. The downregulated genes showed significant enrichment for Myc targets, cholesterol homeostasis, mTORC1 signaling, WNTbeta-catenin signaling.[1]</p><p id="33c3fed9-7b56-41e9-8245-16ca829bcba3" class="">So I think my over-representation results support conclusions or mechanism discussed in the original paper.</p><h2 id="f6b5bd01-6349-4230-98c8-f816300bf2b7" class="">Conclusion</h2><p id="cbe9659e-2b63-4986-8d13-bd64a3cb182e" class="">In this assigment, I have learnt how to complete Differential Gene Expression analysis and Thresholded over-representation analysis.These analyses can provide valuable insights into the biological processes and pathways that are differentially expressed between experimental groups.After completing the analysis, it is important to thoroughly interpret the results and draw meaningful conclusions. This involves understanding the biological context of the pathways and functions identified in the ORA analysis, and how they relate to the research question being investigated. It is also essential to consider the limitations and potential biases of the analysis, and to use appropriate statistical methods for multiple testing correction to control for false positives.</p><h2 id="47c6adc5-3b1b-4461-81e7-31a36222525f" class="">References</h2><p id="0c29e91f-1faa-4b55-9cf6-1b0a52d7ce11" class="">[1] LARIONOVA, Irina, et al. Tumor-associated macrophages respond to chemotherapy by detrimental transcriptional reprogramming and suppressing stabilin-1 mediated clearance of EGF. Frontiers in Immunology, 14: 543.</p><p id="6e3c67bc-6a06-4a3e-aa78-89c27f65f47c" class="">[2] Love MI, Huber W, Anders S. Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome biology 2014; 15: 1–21</p><p id="88275be5-1dd6-4924-8566-539b5e0ee0e4" class="">[3] Robinson, M. D., McCarthy, D. J., &amp; Smyth, G. K. (2010). edgeR: a Bioconductor package for differential expression analysis of digital gene expression data.Bioinformatics, 26(1), 139-140.</p><p id="f688120f-1536-4fe7-b3bf-db679e68bbbc" class="">[4] Ritchie, M. E., Phipson, B., Wu, D., Hu, Y., Law, C. W., Shi, W., &amp; Smyth, G. K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic acids research, 43(7), e47-e47.</p><p id="baf649d0-3ef8-427f-9e53-817200e51684" class="">[5]Khatri P, Sirota M, Butte AJ. Ten years of pathway analysis: current approaches and outstanding challenges. PLoS Comput Biol. 2012;8(2):e1002375. doi:10.1371/journal.pcbi.1002375</p><p id="010d14b9-0a6b-40c8-91d0-a8bba92befe7" class="">[6]Subramanian A, Tamayo P, Mootha VK, et al. Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. 2005;102(43):15545-15550. doi:10.1073/pnas.0506580102</p><p id="d57e6259-4d4b-486d-aec9-dd669252a3a1" class="">
+</p></div></article></body></html>
