@@ -1,0 +1,228 @@
+---
+title: "Homework Assignment3"
+output: html_document
+date: "2023-03-20"
+---
+
+## Objective
+
+**Practise using GSEA**
+
+Given the ranked list comparing mesenchymal and immunoreactive ovarian cancer subtypes(mesenchymal genes have positive scores, immunoreactive have negative scores). perform a GSEA preranked analysis using the following parameters:
+
+- mesenchymal vs immuno rank file
+- genesets from the baderlab geneset collection from February 1, 2020 containing GO = biological process, no IEA and pathways.
+- maximum geneset size of 200
+- minimum geneset size of 15
+- gene set permutation
+
+## Time managerment
+
+Started: Mar 21, 2023
+
+Finished: Mar 21, 2023
+
+Time Estimated: 2 hours
+
+Time Spent: 2 hours
+
+## Results
+
+### Data prepare
+For this assignment, we should prepare the ranked gene list from the assignment and genesets from the baderlab geneset collection. I downloaded [mesenchymal vs immuno rank file](https://github.com/bcb420-2020/Student_Wiki/blob/master/MesenvsImmuno_RNASeq_ranks.rnk) and the genesets from  the [baderlab geneset](http://download.baderlab.org/EM_Genesets/) collection.The genesets are annotated with Entrez IDs.
+
+I choose clusterProfiler to complete the GSEA analysis.
+
+First of all, we need to library the packages.
+```{r message=FALSE}
+if(!require("GSEABase")){
+  BiocManager::install("GSEABase")
+}
+if(!require("clusterProfiler")){
+  BiocManager::install("clusterProfiler")
+}
+if(!require("org.Hs.eg.db")){
+  BiocManager::install("org.Hs.eg.db")
+}
+if(!require("stringr")){
+  BiocManager::install("stringr")
+}
+if(!require("enrichplot")){
+  BiocManager::install("enrichplot")
+}
+```
+
+
+### ID transform
+
+The gene names of the ranked gene list are Symbol IDs. We should tranform the symbol IDs to Entrez ID.
+```{r message=FALSE}
+gene_rank = read.table("./gene_rank.txt", sep = "\t", header = T)
+entrez_ids <- AnnotationDbi::select(org.Hs.eg.db, keys = gene_rank$GeneName, columns = "ENTREZID", keytype = "SYMBOL")
+entrez_ids = na.omit(entrez_ids)
+gene_rank = merge(gene_rank, entrez_ids, by.x = "GeneName", by.y = "SYMBOL")
+```
+
+Then we  should sort the gene list annotated with Entrez IDs.
+```{r}
+# get the gene list
+geneList = gene_rank$rank
+# rename the gene list with ENTREZ IDs
+names(geneList) = gene_rank$ENTREZID
+# sort the gene list
+geneList = sort(geneList,decreasing = T)
+head(geneList)
+```
+
+Then, we load the genesets.
+```{r message=FALSE}
+geneset <- read.gmt("./Human_GOBP_AllPathways_no_GO_iea_February_01_2020_entrezgene.gmt")
+geneset$term = str_replace(geneset$term,"\\%.*","")
+head(geneset)
+```
+
+Now, we could perform the GSEA analysis using the following parameters:
+- mesenchymal vs immuno rank file
+- genesets from the baderlab geneset collection from February 1, 2020 containing GO biological process, no IEA and pathways.
+- maximum geneset size of 200
+- minimum geneset size of 15
+- gene set permutation
+```{r message=FALSE,warning=FALSE}
+egmt <- GSEA(geneList, 
+             TERM2GENE=geneset,
+             verbose=F,
+             minGSSize = 15,
+             maxGSSize = 200,
+             pvalueCutoff = 0.05,
+             pAdjustMethod = "fdr"
+             )
+results = egmt@result
+results$geneNums = unlist(lapply(results$core_enrichment, FUN = function(x){
+  return(length(unlist(str_split(x, "/"))))
+}))
+rownames(results) = 1:nrow(results)
+# get the first 6 rows of GSEA results
+head(results)
+```
+
+the top 5 gene sets returned for the Mesenchymal subtype:
+```{r}
+res_mesenchymal <- results[results$enrichmentScore > 0,]
+res_mesenchymal <- res_mesenchymal[order(res_mesenchymal$pvalue, -res_mesenchymal$NES, decreasing = F),]
+# export the results
+write.csv(res_mesenchymal, file = "GSEA_results_for_Mesenchymal_subtype.csv", quote = F, row.names = FALSE)
+head(res_mesenchymal, 5)
+```
+
+the top gene set returned for the Mesenchymal subtype:
+```{r }
+res_mesenchymal[1,]
+```
+
+the top gene associated with the top geneset for the Mesenchymal subtype:
+```{r }
+entrez_ids[entrez_ids$ENTREZID == "2200",]
+```
+
+the top 5 gene sets returned for the Immunoreactive subtype:
+```{r}
+res_immunoreactive <- results[results$enrichmentScore < 0,]
+res_immunoreactive<- res_immunoreactive[order(res_immunoreactive$pvalue, res_immunoreactive$NES, decreasing = F),]
+# export the results
+write.csv(res_immunoreactive, file = "GSEA_results_for_Immunoreactive_subtype.csv", quote = F, row.names = FALSE)
+head(res_immunoreactive, 5)
+```
+
+
+the top gene set returned for the Immunoreactive subtype:
+```{r }
+res_immunoreactive[1,]
+```
+
+the top gene associated with the top geneset for the Immunoreactive subtype:
+```{r }
+entrez_ids[entrez_ids$ENTREZID == "54809",]
+```
+
+
+Then we visualize the most significant top5 pathways for mesenchymal and immunoreactive ovarian cancer subtypes(mesenchymal genes have positive scores, immunoreactive have negative scores).
+```{r fig.height=8, fig.width=12}
+# mesenchymal genes
+pathways_mesenchymal = as.numeric(rownames(results)[results$enrichmentScore > 0])[1:5]
+gseaplot2(egmt, geneSetID = pathways_mesenchymal,pvalue_table = T)
+```
+<\center Figure 1 the top 5 gene set returned for the Mesenchymal subtype \>
+
+```{r fig.height=8, fig.width=12}
+# immunoreactive genes
+pathways_immunoreactive = as.numeric(rownames(results)[results$enrichmentScore < 0])[1:5]
+gseaplot2(egmt, geneSetID = pathways_immunoreactive,pvalue_table = T)
+```
+<\center Figure 2 the top 5 gene set returned for the Immunoreactive subtype \>
+
+## Interpretation
+
+**1.Explain the reasons for using each of the above parameters.**
+
+GSEA is used to evaluate the distribution trend of a predefined gene set in a gene table that is sorted by its correlation with a phenotype, in order to determine its contribution to the phenotype. The input data consists of two parts: a gene set with known functions (which can be GO annotations, MsigDB annotations, or other gene set definitions in the appropriate format) and an expression matrix (which can also be a sorted list). GSEA sorts the genes in the gene set according to their correlation with the phenotype (which can be understood as the change in expression values), and then determines whether the genes in each annotation of the gene set are enriched in the upper or lower part of the gene table sorted by phenotype correlation. This allows GSEA to determine the impact of coordinated changes in genes within the gene set on the phenotype.
+
+The reasons for using each of the above parameters:
+
+- Mesenchymal vs. immuno rank file:
+This parameter specifies the ranked list of genes that will be used for the GSEA analysis. In this case, the list compares mesenchymal and immunoreactive ovarian cancer subtypes, where mesenchymal genes have positive scores and immunoreactive genes have negative scores.
+
+- Genesets from the Baderlab geneset collection from February 1, 2020 containing GO biological process, no IEA and pathways:
+This parameter specifies the gene sets that will be used for the GSEA analysis. The Baderlab geneset collection is a curated database of gene sets that includes GO biological process and pathway gene sets. The "no IEA" filter ensures that only experimentally validated gene sets are used in the analysis.
+
+- Maximum geneset size of 200:
+This parameter specifies the maximum number of genes allowed in a gene set. It is set to 200 in this analysis, which means that any gene set with more than 200 genes will be excluded.
+
+- Minimum geneset size of 15:
+This parameter specifies the minimum number of genes allowed in a gene set. It is set to 15 in this analysis, which means that any gene set with fewer than 15 genes will be excluded.
+
+- Gene set permutation:
+This parameter specifies the method used to calculate the statistical significance of the enrichment score for each gene set. Gene set permutation is a widely used method that randomly shuffles gene labels to generate a null distribution of enrichment scores. The actual enrichment score is then compared to this null distribution to calculate a p-value.
+
+
+**2. What is the top gene set returned for the Mesenchymal sub type? What is the top gene set returned for the Immunoreactive subtype? For each of the genesets answer the below questions:**
+
+- **What is its pvalue, ES, NES and FDR associated with it.**
+
+- **How many genes in its leading edge?**
+
+- **What is the top gene associated with this geneset.**
+
+The top gene set returned for the Mesenchymal subtype is HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION:
+
+pvalue: 1e-10
+
+ES: 0.8607771 
+
+NES: 2.57155  
+
+FDR: 4.281452e-09
+
+There are 108 genes in its leading edge.
+
+The top gene associated with this geneset is FBN1(Entrez ID:2200).
+
+The top gene set returned for the Immunoreactive subtype is HALLMARK_INTERFERON_ALPHA_RESPONSE :
+
+pvalue: 1e-10
+
+ES: -0.8624638 
+
+NES: -2.983914  
+
+FDR: 4.281452e-09
+
+There are 67 genes in its leading edge.
+
+The top gene associated with this geneset is SAMD9(Entrez ID:54809).
+
+
+## Reference
+
+- Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L., Gillette, M. A., ... & Mesirov, J. P. (2005). Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proceedings of the National Academy of Sciences, 102(43), 15545-15550.
+
+- Yu, G., Wang, L. G., Han, Y., & He, Q. Y. (2012). clusterProfiler: an R package for comparing biological themes among gene clusters. Omics: a journal of integrative biology, 16(5), 284-287.
