@@ -28,8 +28,8 @@ https://github.com/bcb420-2023/Xiaolin_Bu/wiki
 [GSEA](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Homework-Assginment3:-GSEA)
 
 ## Assignment 3 - Data set Pathway and Network Analysis
-[Assignment 3 Rnotebook]()
+[Assignment 3 Rnotebook](https://github.com/bcb420-2023/Xiaolin_Bu/blob/main/Assignment3/Assignment3.Rmd)
 
-[Assignment 3 html Report])
+[Assignment 3 html Report](https://github.com/bcb420-2023/Xiaolin_Bu/blob/main/Assignment3/Assignment3.html)
 
-[Assignment 3 journal]()
+[Assignment 3 journal](https://github.com/bcb420-2023/Xiaolin_Bu/wiki/Assignment-3-Journal)
