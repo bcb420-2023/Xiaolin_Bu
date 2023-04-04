@@ -1,0 +1,23 @@
+producer_class	xtools.gsea.GseaPreranked
+producer_timestamp	1680596077885
+param	rpt_label	cisplatin_vs_nonCisplatin
+param	rnd_seed	timestamp
+param	set_min	15
+param	zip_report	false
+param	create_svgs	false
+param	scoring_scheme	weighted
+param	rnk	D:\NYFZ\NY006\ranked_genes.rnk
+param	norm	meandiv
+param	out	C:\Users\admin\gsea_home\output\apr04
+param	mode	Abs_max_of_probes
+param	include_only_symbols	true
+param	help	false
+param	set_max	200
+param	gmx	ftp.broadinstitute.org://pub/gsea/msigdb/human/gene_sets/h.all.v2023.1.Hs.symbols.gmt,ftp.broadinstitute.org://pub/gsea/msigdb/human/gene_sets/c2.cp.kegg.v2023.1.Hs.symbols.gmt,ftp.broadinstitute.org://pub/gsea/msigdb/human/gene_sets/c2.cp.reactome.v2023.1.Hs.symbols.gmt,ftp.broadinstitute.org://pub/gsea/msigdb/human/gene_sets/c5.go.bp.v2023.1.Hs.symbols.gmt
+param	make_sets	true
+param	plot_top_x	20
+param	gui	false
+param	nperm	1000
+param	collapse	No_Collapse
+
+file	C:\Users\admin\gsea_home\output\apr04\cisplatin_vs_nonCisplatin.GseaPreranked.1680596077885\index.html
